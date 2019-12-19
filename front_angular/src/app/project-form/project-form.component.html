@@ -1,0 +1,33 @@
+<div style="height: 51px;"></div>
+
+
+<form action="" #projectForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+
+    <div class="form-group">
+        <label for="description">Project name : </label>
+        <input type="text" #name="ngModel" class="form-control" [class.is-invalid]="name.invalid && name.touched" [(ngModel)]="projectModel.name" required name="name">
+        <small class="text-danger" [class.d-none]="name.valid || name.untouched">Project name is required</small>
+    </div>
+
+
+    <div class="form-group">
+        <label for="description">Description : </label>
+        <textarea type="text" required [class.is-invalid]="description.invalid && description.touched" #description="ngModel" class="form-control" [(ngModel)]="projectModel.description" name="description" cols="30" rows="5"></textarea>
+        <small class="text-danger" [class.d-none]="description.valid || description.untouched">Description is required</small>
+    </div>
+
+    <div class="form-group">
+        <label for="">Add a membersto the project :</label>
+        <input class="form-control" #member="ngModel" type="text" [(ngModel)]="currentMember" name="member" width="400">
+        <a class="btn btn-success" (click)="addmember(currentMember)">add</a>
+        <small class="text-danger" [class.d-none]="existUser">This user doas not exist</small>
+        <div *ngFor="let member of members">
+            {{member}}
+            <a class="btn btn-danger" (click)="removemember(member)">remove</a></div>
+    </div>
+
+    <button class="btn btn-primary"> 
+      Ajouter
+    </button>
+
+</form>

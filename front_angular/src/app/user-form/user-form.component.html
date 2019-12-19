@@ -1,0 +1,72 @@
+<div style="height: 51px">
+    <a routerLink="/login" class="">retour à la page de connexion</a>
+</div>
+
+<div class="container">
+    <div class="alert alert-danger" *ngIf="errorMsg">
+        {{errorMsg}}
+    </div>
+
+    <form action="" #userForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+
+        <div class="form-group">
+            <label for="name">First Name :</label>
+            <input type="text" required [class.is-invalid]="name.invalid && name.touched" #name="ngModel" class="form-control" id="name" [(ngModel)]="userModel.name" name="name">
+            <small class="text-danger" [class.d-none]="name.valid || name.untouched">First name is required</small>
+        </div>
+
+
+        <div class="form-group">
+            <label for="lname">Last Name : </label>
+            <input type="text" required [class.is-invalid]="lname.invalid && lname.touched" #lname="ngModel" class="form-control" id="lname" [(ngModel)]="userModel.lname" name="lname">
+            <small class="text-danger" [class.d-none]="lname.valid || lname.untouched">Last name is required</small>
+        </div>
+
+        <div class="form-group">
+            <label for="uname">User name : </label>
+            <input type="text" required [class.is-invalid]="uname.invalid && uname.touched" #uname="ngModel" class="form-control" id="uname" [(ngModel)]="userModel.uname" name="uname">
+            <small class="text-danger" [class.d-none]="uname.valid || uname.untouched">User name is required</small>
+        </div>
+
+        <div class="form-group">
+            <label for="email">E-mail : </label>
+            <input type="email" required [class.is-invalid]="email.invalid && email.touched" #email="ngModel" class="form-control" id="email" [(ngModel)]="userModel.email" name="email" pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}" style="text-transform: lowercase">
+            <div *ngIf="(email.errors && (email.invalid && email.touched))">
+                <small class="text-danger" *ngIf="email?.errors.required">E-mail is required</small>
+                <small class="text-danger" *ngIf="email?.errors.pattern">E-mail like : exemple@server.com</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="pwd">Password : </label>
+            <input type="password" required [class.is-invalid]="password.invalid && password.touched" #password="ngModel" class="form-control" id="pwd" [(ngModel)]="userModel.password" minlength="8" name="password">
+            <div *ngIf="password.errors && (password.invalid && password.touched)">
+                <small class="text-danger" *ngIf="password?.errors.required">Password is required</small>
+                <small class="text-danger" *ngIf="password?.errors.minlength">Password min length is 6</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="pwd2">Confirm password : </label>
+            <input type="password" (blur)="validatePassword(password.value,pwd.value)" (change)="validatePassword(password.value,pwd.value)" required [class.is-invalid]="!passwordConfirm && pwd.touched" #pwd="ngModel" [(ngModel)]="userModel.pwd" class="form-control"
+                id="pwd2" name="pwd">
+
+            <small class="text-danger" [class.d-none]="passwordConfirm || pwd.untouched">Password must match</small>
+        </div>
+
+        <div class="form-group">
+            <label for="">Role : </label>
+            <select class="custom-select" (blur)="validateRole(role.value)" (change)="validateRole(role.value)" [class.is-invalid]="roleHasError && role.touched" #role="ngModel" [(ngModel)]="userModel.role" name="role">
+          <option selected="true" value="default">Select your role</option>
+          <option *ngFor="let item of roles" [value]="item">{{item}}</option>
+        </select>
+            <small class="text-danger" [class.d-none]="!roleHasError || role.untouched">please select your role</small>
+        </div>
+
+
+        <div class="text-center">
+            <button [disabled]="userForm.form.invalid || roleHasError || !passwordConfirm" class="btn btn-success" type="submit">S'inscrire</button>
+        </div>
+
+    </form>
+</div>
