@@ -1,0 +1,6 @@
+Application de gestion de bugs et d'incidents.
+Réaliser avec 
+NodeJs version 12.13.0
+Angular CLI version 8.3.18
+MongoDB version 4.2.1
+Bootstrap 4
