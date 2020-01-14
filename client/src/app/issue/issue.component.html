@@ -1,0 +1,73 @@
+<div style="height:51px;"></div>
+<div class="w-100 p-3" style="background-color: #eee; margin-bottom : 10px">
+    <h3 class="text-center">BUGS et INCIDENTS du Projet : <b>{{title}}</b></h3>
+</div>
+<div style="height:70px">
+    <a [routerLink]="['/template/addIssue',projectId]" class="btn btn-primary">Ajouter un Bug/Incident</a>
+</div>
+
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Description</th>
+            <th scope="col">Priorité</th>
+            <th scope="col">Assigné à</th>
+            <th scope="col">Catégorie</th>
+            <th scope="col">État</th>
+            <th scope="col" *ngIf="admin">Modifier</th>
+            <th scope="col" *ngIf="admin">Supprimer</th>
+            <th scope="col">Prendre</th>
+
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr *ngFor="let issue of issues">
+
+
+            <td [ngClass]="{'table-success' : issue.priority === 'low', 'table-danger' : issue.priority === 'high', 'table-warning' : issue.priority === 'medium'}">
+                {{issue.description}}</td>
+            <td [ngClass]="{'table-success' : issue.priority === 'low', 'table-danger' : issue.priority === 'high', 'table-warning' : issue.priority === 'medium'}">
+                {{issue.priority}}</td>
+            <td [ngClass]="{'table-success' : issue.priority === 'low', 'table-danger' : issue.priority === 'high', 'table-warning' : issue.priority === 'medium'}">
+                {{issue.assignedTo}}</td>
+            <td [ngClass]="{'table-success' : issue.priority === 'low', 'table-danger' : issue.priority === 'high', 'table-warning' : issue.priority === 'medium'}">
+                {{issue.category}}</td>
+            <td [ngClass]="{'table-success' : issue.priority === 'low', 'table-danger' : issue.priority === 'high', 'table-warning' : issue.priority === 'medium'}">
+                {{issue.status}}</td>
+
+            <td *ngIf="admin" [ngClass]="{'table-success' : issue.priority === 'low', 'table-danger' : issue.priority === 'high', 'table-warning' : issue.priority === 'medium'}">
+                <div class="col text-center"><a [routerLink]="['/template/updateIssue',issue._id,issue.project]" class="btn btn-warning text-white"><i class="fa fa-edit"></i></a></div>
+            </td>
+
+            <td *ngIf="admin" [ngClass]="{'table-success' : issue.priority === 'low', 'table-danger' : issue.priority === 'high', 'table-warning' : issue.priority === 'medium'}">
+                <div class="col text-center"><a class="btn btn-danger text-white" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-trash-o"></i></a></div>
+                <!-- Modal confirm -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Supprimer Bug/Incident</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                            </div>
+                            <div class="modal-body">
+                                Êtes vous sûr de vouloir supprimer ce Bug/Incident!
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                                <button type="button" (click)="deleteIssue(issue._id)" class="btn btn-primary">Oui</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+
+            <td [ngClass]="{'table-success' : issue.priority === 'low', 'table-danger' : issue.priority === 'high', 'table-warning' : issue.priority === 'medium'}">
+                <div class="col text-center"><a (click)="takeIssue(issue._id)" class="btn btn-secondary text-white"><i class="fa fa-hand-paper-o"></i></a></div>
+            </td>
+        </tr>
+
+    </tbody>
+</table>

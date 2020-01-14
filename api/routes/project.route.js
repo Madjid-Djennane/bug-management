@@ -1,4 +1,4 @@
-// issue.route.js
+// project.route.js
 
 const express = require('express');
 //const app = express();
@@ -6,55 +6,26 @@ const projectRoutes = express.Router();
 
 const Project = require("../models/Project");
 const User = require("../models/User");
+const veriftoken = require('./veriftoken')
 
 // Require Issue model in our routes module
 
-/* 
-projectRoutes.route('/:member').get((req, res) => {
 
-    member = req.params.member;
+/**
+ * @swagger
+ * /project/getUsersEmails:
+ *   get:
+ *     tags:
+ *       - Project
+ *     description: Retourne les emails de tous les utilisateurs (susceptible d'appartenir à un projet)
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: emails des utilisateurs retournés
+ */
 
-    User.findOne({ uname: member }, (err, user) => {
-        if (err) {
-            console.log(err);
-            res.status(500).json({ error: err });
-        }
-
-        Project.findOne({ title: "projet 1" }, (err, project) => {
-
-            if (err) {
-                res.status(500).json({ error: err });
-            }
-
-            project.members.push(user.id);
-            project.save();
-
-        });
-
-        res.send(user.uname)
-
-                let project = new Project({
-                    title: "projet 1",
-                    description: "this is project n°1",
-                    admin: user.id
-                });
-
-                project.save((err) => {
-                    if (err) console.log(err);
-                    res.send('project created');
-                }) 
-    });
-
-
-
-
-
-});
-*/
-
-// before adding new project
-
-projectRoutes.route('/addProject').get((req, res) => {
+projectRoutes.route('/getUsersEmails').get(veriftoken.verifyToken, (req, res) => {
 
     let data = {
         users: [],
@@ -66,13 +37,13 @@ projectRoutes.route('/addProject').get((req, res) => {
                 data.users.push(user[element].email)
             }
 
-            Project.find({}).select('name -_id').then((project) => {
+            Project.find({}).select('title -_id').then((project) => {
 
                     for (element in project) {
-                        data.projects.push(project[element].name);
+                        data.projects.push(project[element].title);
                     }
 
-                    res.json(data)
+                    res.status(200).json(data)
 
                 })
                 .catch(error => {
@@ -91,10 +62,28 @@ projectRoutes.route('/addProject').get((req, res) => {
 });
 
 
-// add a new project 
+/**
+ * @swagger
+ * /project/add:
+ *   post:
+ *     tags:
+ *       - Project
+ *     description: Ajouter un projet
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: project
+ *         description: projet à ajouter
+ *         in: body
+ *         required: true
+ *         type: object
+ *     responses:
+ *       200:
+ *         description: Projet ajouté
+ */
 
-projectRoutes.route('/add').post((req, res) => {
-    // console.log(req.body);
+projectRoutes.route('/add').post(veriftoken.verifyToken, (req, res) => {
+
     let project = {
         title: req.body.title,
         description: req.body.description,
@@ -103,14 +92,6 @@ projectRoutes.route('/add').post((req, res) => {
     }
 
     const users = req.body.members;
-
-    /*     User.findOne({_id:project.admin}).then(user => {
-
-        })
-        .catch(err => {
-
-        }) */
-
 
     User.find({ email: users }).select("_id").then(user => {
 
@@ -157,16 +138,104 @@ projectRoutes.route('/add').post((req, res) => {
         })
         .catch(
             err => {
-                console.log(err)
+
                 res.status(400).send("error with id users")
             }
         )
 
-
-    //console.log(project);
-
-
 })
+
+/**
+ * @swagger
+ * /project/getProject/{projectId}:
+ *   get:
+ *     tags:
+ *       - Project
+ *     description: Retourne le projet dont l'id est donné en paramètre
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: projectId
+ *         description: project id
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Projet retourné
+ */
+
+projectRoutes.route('/getProject/:projectId').get(veriftoken.verifyToken, (req, res) => {
+
+
+    const projectId = req.params.projectId;
+    Project.findOne({ _id: projectId })
+        .populate('members')
+        .exec((err, project) => {
+
+            if (err) res.status(500).end;
+
+            res.status(200).json(project);
+        });
+})
+
+/**
+ * @swagger
+ * /project/update:
+ *   put:
+ *     tags:
+ *       - Project
+ *     description: Met à jour un projet
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: project
+ *         description: projet a mettre à jour
+ *         in: body
+ *         required: true
+ *         type: object
+ *     responses:
+ *       200:
+ *         description: Projet mis à jour
+ */
+
+projectRoutes.route('/update').put(veriftoken.verifyToken, async(req, res) => {
+
+    let project = req.body.project;
+    project.members.length = 0;
+
+    for (i in req.body.members) {
+        mail = req.body.members[i]
+        use = await User.findOne({ email: mail })
+        if (use) {
+            use.projects.push(project._id)
+            use.save()
+        }
+    }
+
+
+    User.find({ email: req.body.members }).select('_id').then(user => {
+            for (i in user) {
+                project.members.push((user[i]._id))
+
+            }
+
+            Project.updateOne({ _id: project._id }, project, async(err) => {
+                if (err) {
+                    res.statusMessage = 'cannot update project';
+                    res.status(400).end();
+                }
+
+                res.status(200).json({ 'message': 'updated' });
+            });
+        })
+        .catch(err => {
+            res.statusMessage = 'cannot update project';
+            res.status(400).end();
+        })
+
+
+});
 
 
 module.exports = projectRoutes;

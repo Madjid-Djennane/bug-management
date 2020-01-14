@@ -1,0 +1,71 @@
+<div style="height:51px;"></div>
+
+<div class="w-100 p-3" style="background-color: #eee; margin-bottom : 10px">
+    <h3 class="text-center">Ajouter un BUG/INCIDENT au Projet</h3>
+</div>
+
+<div class="alert alert-success" *ngIf="successMsg">
+    {{successMsg}}
+</div>
+
+<form action="" #issueForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+
+
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea type="text" required [class.is-invalid]="description.invalid && description.touched" #description="ngModel" class="form-control" id="description" [(ngModel)]="issueModel.description" name="description" cols="30" rows="5"></textarea>
+        <small class="text-danger" [class.d-none]="description.valid || description.untouched">La déscription est requise</small>
+    </div>
+
+
+    <div class="form-group">
+        <label for="">Priorité</label>
+        <select class="custom-select" (blur)="validatePriority(priority.value)" (change)="validatePriority(priority.value)" [class.is-invalid]="priorityHasError && priority.touched" #priority="ngModel" [(ngModel)]="issueModel.priority" name="priority">
+      <option selected="true" value="default">Veuillez séléctionner la priorité</option>
+      <option *ngFor="let item of priorities" [value]="item">{{item}}</option>
+    </select>
+        <small class="text-danger" [class.d-none]="!priorityHasError || priority.untouched">Veuillez séléctionner la priorité</small>
+    </div>
+
+
+    <div class="form-group">
+        <label for="description">Assigné à</label>
+        <select class="custom-select" #assignedTo="ngModel" [(ngModel)]="issueModel.assignedTo" name="assignedTo">
+          <option selected="true" value="default">Séléctionnez un membre</option>
+          <option *ngFor="let item of members" [value]="item.email">{{item.name}} {{item.lname}}</option>
+        </select>
+    </div>
+
+
+
+    <div class="form-group">
+        <label for="">Catégorie</label>
+        <select class="custom-select" (blur)="validateCategory(category.value)" (change)="validateCategory(category.value)" [class.is-invalid]="categoryHasError && category.touched" #category="ngModel" [(ngModel)]="issueModel.category" name="category">
+        <option selected="true" value="default">Veuillez séléctionner la catégorie</option>
+        <option *ngFor="let item of categories" [value]="item">{{item}}</option>
+      </select>
+        <small class="text-danger" [class.d-none]="!categoryHasError || category.untouched">Veuillez séléctionner la catégorie</small>
+    </div>
+
+
+    <div class="form-group">
+        <label for="">État</label>
+        <select class="custom-select" (blur)="validateStatus(status.value)" (change)="validateStatus(status.value)" [class.is-invalid]="statusHasError && status.touched" #status="ngModel" [(ngModel)]="issueModel.status" name="status">
+        <option selected="true" value="default">Veuillez séléctionner l'état</option>
+        <option *ngFor="let item of stats" [value]="item">{{item}}</option>
+      </select>
+        <small class="text-danger" [class.d-none]="!statusHasError || status.untouched">Veuillez séléctionner un état</small>
+    </div>
+
+
+    <!--     <div class="form-group">
+        <label for="project">Project : </label>
+        <input type="text" required #project="ngModel" class="form-control" id="project" [(ngModel)]="issueModel.project" name="project">
+        <small class="text-danger" [class.d-none]="project.valid || project.untouched">Project is required</small>
+    </div> -->
+
+    <div class="text-center">
+        <button [disabled]="issueForm.form.invalid || priorityHasError || categoryHasError || statusHasError " class="btn btn-success" type="submit">Ajouter</button>
+    </div>
+
+</form>

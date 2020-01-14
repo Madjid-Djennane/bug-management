@@ -1,35 +1,30 @@
 const express = require('express');
 const userRoutes = express.Router();
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
+const veriftoken = require('./veriftoken');
 
 let User = require('../models/User');
 
-//Verification of the token
 
-
-let verifyToken = function(req, res, next) {
-    console.log(req);
-    if (!req.headers.authorization) {
-        return res.status(401).send('Unauthorized request')
-    }
-
-    let token = req.headers.authorization.split(' ')[1]
-    if (token === 'null') {
-        return res.status(401).send('Unauthorized request')
-    }
-
-    let payload = jwt.verify(token, 'eyJpc3MiOiJ0b2RvYXBpIiwibmJmIjoxND')
-    if (!payload) {
-        return res.status(401).send('Unauthorized request')
-    }
-
-    req.userId = payload.subject
-    next()
-}
-
-// add user
+/**
+ * @swagger
+ * /user/add:
+ *   post:
+ *     tags:
+ *       - User
+ *     description: Ajoute un utilisateur (vérifie si l'email et le nom d'utilisateur n'existant pas déjà)
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: user
+ *         description: utilisateur à ajouter
+ *         in: body
+ *         required: true
+ *         type: object
+ *     responses:
+ *       200:
+ *         description: utilisateur ajouté
+ */
 
 userRoutes.route('/add').post((req, res) => {
 
@@ -59,7 +54,6 @@ userRoutes.route('/add').post((req, res) => {
                             res.status(201).json({ 'issue': 'user is added successfully' });
                         })
                         .catch(err => {
-                            //console.log(err);
                             res.status(400).json(err);
 
                         });
@@ -77,9 +71,30 @@ userRoutes.route('/add').post((req, res) => {
 
 });
 
-// get Users
+/**
+ * @swagger
+ * /user:
+ *   get:
+ *     tags:
+ *       - User
+ *     description: Retourne un utilisateur
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: user id
+ *         in: body
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Utilisateur retourné
+ */
 
-userRoutes.route('/').get(verifyToken, (req, res) => {
+userRoutes.route('/').get(veriftoken.verifyToken, (req, res) => {
+
+    console.log(req.userId);
+
     User.find((err, users) => {
         if (err) {
             res.status(400).end(err);
@@ -90,7 +105,7 @@ userRoutes.route('/').get(verifyToken, (req, res) => {
 });
 
 
-// Activate user
+/* // Activate user
 userRoutes.route('/setActivation').post(async(req, res) => {
 
     console.log(req.body);
@@ -104,6 +119,6 @@ userRoutes.route('/setActivation').post(async(req, res) => {
     }
 
 });
-
+ */
 
 module.exports = userRoutes;

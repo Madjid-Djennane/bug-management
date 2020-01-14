@@ -1,0 +1,47 @@
+<div style="height: 51px;"></div>
+<div class="w-100 p-3" style="background-color: #eee; margin-bottom : 10px">
+    <h3 class="text-center">Ajouter un Projet</h3>
+
+    <div class="alert alert-success" *ngIf="successMsg">
+        {{successMsg}}
+    </div>
+
+    <form action="" #projectForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+
+        <div class="form-group">
+            <label for="description">Nom du projet</label>
+            <input type="text" #name="ngModel" class="form-control" [class.is-invalid]="name.invalid && name.touched" [(ngModel)]="projectModel.title" required name="name">
+            <small class="text-danger" [class.d-none]="name.valid || name.untouched">Veuillez saisir le nom du projet</small>
+        </div>
+
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea type="text" required [class.is-invalid]="description.invalid && description.touched" #description="ngModel" class="form-control" [(ngModel)]="projectModel.description" name="description" cols="30" rows="5"></textarea>
+            <small class="text-danger" [class.d-none]="description.valid || description.untouched">Veuillez saisir la déscription du projet</small>
+        </div>
+
+        <div class="form-group">
+            <label for="">Ajouter un membre au projet</label>
+            <input class="form-control" #member="ngModel" type="text" [(ngModel)]="currentMember" name="member" width="400">
+            <small>Veuillez saisir l'email de l'utilisateur a ajouter</small> <br>
+            <a class="btn btn-success" (click)="addmember(currentMember)"><i class="fa fa-plus"></i></a>
+            <small class="text-danger" [class.d-none]="existUser">Ce Nom d'utilisateur n'éxiste pas !</small>
+            <div class="row">
+
+
+                <div *ngFor="let member of members" class="col-md-3">
+                    {{member}}
+                    <a class="btn btn-danger" (click)="removemember(member)"><i class="fa fa-minus"></i></a></div>
+
+            </div>
+            <!--trash -->
+        </div>
+
+        <div class="col text-center">
+            <button class="btn btn-primary">
+      Ajouter le projet
+    </button>
+        </div>
+
+    </form>

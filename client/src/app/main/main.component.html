@@ -1,0 +1,96 @@
+<div style="height: 51px"></div>
+
+<div class="w-100 p-3" style="background-color: #eee; margin-bottom:10px">
+    <h3 class="text-center">Tableau de Bord</h3>
+</div>
+<!-- projet admin-->
+<mdb-card cascade="true" narrower="true">
+
+    <!--Card image-->
+    <div class="view view-cascade gradient-card-header blue-gradient narrower py-2 mx-4 mb-3 d-flex justify-content-between align-items-center">
+        <a href="/template/home" class="white-text mx-3">Projet Admin</a>
+    </div>
+    <small>Tous les projets créés par l'utilisateur courant (vous)</small>
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col" style="width:200px">Nom du projet</th>
+                <th scope="col">Description</th>
+                <th scope="col" style="width:70px">Bugs/Incidents</th>
+                <th scope="col" style="width:50px">Modifier</th>
+                <th scope="col" style="width:50px">Supprimer</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let admin of adminProject">
+                <td>{{admin.title}}</td>
+                <td>{{admin.description}}</td>
+                <td>
+                    <div class="col text-center"><a [routerLink]="['/template/issue',admin._id,admin.title]" class="btn btn-info" routerLinkActive="active"><i class="fa fa-eye"></i></a></div>
+                </td>
+                <td>
+                    <div class="col text-center"><a [routerLink]="['/template/editProject',admin._id]" class="btn btn-warning text-white" routerLinkActive="active"><i class="fa fa-edit fa-lg"></i></a></div>
+                </td>
+                <td>
+                    <div class="col text-center"><a class="btn btn-danger text-white" data-toggle="modal" data-target="#exampleModal" routerLinkActive="active"><i class="fa fa-trash"></i></a></div>
+                    <!-- Modal confirm -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Supprimer Projet</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                 <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Êtes vous sûr de vouloir supprimer ce projet !
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                                    <button type="button" (click)="deleteProject(admin._id)" class="btn btn-primary">Oui</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</mdb-card>
+
+
+
+<div style="height: 51px"></div>
+
+<!-- Projets Membre-->
+<mdb-card cascade="true" narrower="true">
+
+    <!--Card image-->
+    <div class="view view-cascade gradient-card-header blue-gradient narrower py-2 mx-4 mb-3 d-flex justify-content-between align-items-center">
+        <a href="/template/home" class="white-text mx-3">Projet Membre</a>
+    </div>
+    <small>Tous les projets auquels l'utilisateur courant (vous) a été ajouté</small>
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col" style="width:200px">Nom du projet</th>
+                <th scope="col">Description</th>
+                <th scope="col" style="width:70px">Bugs/incidents</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let member of memberProject">
+                <td>{{member.title}}</td>
+                <td>{{member.description}}</td>
+                <td>
+                    <div class="col text-center"><a [routerLink]="['/template/issue',member._id,member.title]" class="btn btn-info" routerLinkActive="active"><i class="fa fa-eye"></i></a></div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</mdb-card>

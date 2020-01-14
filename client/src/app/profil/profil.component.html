@@ -1,0 +1,184 @@
+<div class="w-100 p-3" style="background-color: #eee; margin-bottom:10px;margin-top : 10px">
+    <h3 class="text-center">
+        Profile utilisateur</h3>
+</div>
+
+<div class="container">
+    <div class="row my-2">
+        <div class="col-lg-10 order-lg-2">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a href="" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="" data-target="#edit" data-toggle="tab" class="nav-link">Modifier profile</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="" data-target="#password" data-toggle="tab" class="nav-link">Modifier mot de passe</a>
+                </li>
+            </ul>
+            <div class="tab-content py-4">
+
+
+                <div class="tab-pane active" id="profile">
+                    <h5 class="mb-3">User Profile</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>About</h6>
+                            <p>
+                                {{user.role}}
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-12">
+                            <h5 class="mt-2"><span class="fa fa-clock-o ion-clock float-right"></span>Données personnelles</h5>
+                            <table class="table table-sm table-hover table-striped">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            Nom : <strong>{{user.lname}}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Prénom : <strong>{{user.name}}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Nom d'utilisateur : <strong>{{user.uname}}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            E-mail : <strong>{{user.email}}</strong>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--/row-->
+                </div>
+
+                <div class="tab-pane" id="edit">
+                    <div class="alert alert-danger" *ngIf="errorMsg">
+                        {{errorMsg}}
+                    </div>
+                    <div class="alert alert-success" *ngIf="successMsg">
+                        {{successMsg}}
+                    </div>
+                    <form role="form" #userForm="ngForm" novalidate (ngSubmit)="onSubmit()">
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Nom : </label>
+                            <div class="col-lg-9">
+                                <input type="text" required [class.is-invalid]="lname.invalid" [(ngModel)]="user.lname" #lname="ngModel" class="form-control" id="lname" name="lname">
+                                <small class="text-danger" [class.d-none]="lname.valid">Veillez saisir votre Prénom</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Prénom : </label>
+                            <div class="col-lg-9">
+                                <input type="text" required [class.is-invalid]="name.invalid" [(ngModel)]="user.name" #name="ngModel" class="form-control" id="name" name="name">
+                                <small class="text-danger" [class.d-none]="name.valid">Veuillez saisir votre Nom</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Nom d'utilisateur : </label>
+                            <div class="col-lg-9">
+                                <input type="text" required [class.is-invalid]="uname.invalid" #uname="ngModel" class="form-control" id="uname" [(ngModel)]="user.uname" name="uname">
+                                <small class="text-danger" [class.d-none]="uname.valid">User name is required</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">E-mail : </label>
+                            <div class="col-lg-9">
+                                <input type="email" required [class.is-invalid]="email.invalid" #email="ngModel" class="form-control" id="email" [(ngModel)]="user.email" name="email" pattern="[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-zA-Z]{2,4}" style="text-transform: lowercase">
+                                <div *ngIf="email.errors && email.invalid">
+                                    <small class="text-danger" *ngIf="email?.errors.required">veuillez saisir une adresse mail</small>
+                                    <small class="text-danger" *ngIf="email?.errors.pattern">E-mail example: exemple@server.com</small>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <div class="col-lg-9">
+                                <button class="btn btn-success">Modifier</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+
+
+                <!-- Mot de passe -->
+                <div class="tab-pane" id="password">
+                    <div class="alert alert-danger" *ngIf="errorMsg">
+                        {{errorMsg}}
+                    </div>
+                    <div class="alert alert-success" *ngIf="successMsg">
+                        {{successMsg}}
+                    </div>
+                    <form role="form" #passwordForm="ngForm" novalidate (ngSubmit)="onSubmitPwd()">
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Ancien mot de passe</label>
+                            <div class="col-lg-9">
+                                <input type="password" required [class.is-invalid]="pass.invalid && pass.touched" #pass="ngModel" class="form-control" id="pass" [(ngModel)]="password.pass" minlength="8" name="password">
+                                <div *ngIf="pass.errors && (pass.invalid && pass.touched)">
+                                    <small class="text-danger" *ngIf="pass?.errors.required">Veuillez saisir un mot de passe</small>
+                                    <small class="text-danger" *ngIf="pass?.errors.minlength">Le Nombre de caractéres minimum est 8 !</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Nouveau mot de passe</label>
+                            <div class="col-lg-9">
+                                <input type="password" required [class.is-invalid]="Newpwd.invalid && Newpwd.touched" #Newpwd="ngModel" [(ngModel)]="password.Newpwd" class="form-control" id="pwd" minlength="8" name="npassword">
+                                <div *ngIf="Newpwd.errors && (Newpwd.invalid && Newpwd.touched)">
+                                    <small class="text-danger" *ngIf="Newpwd?.errors.required">Veuillez saisir un mot de passe</small>
+                                    <small class="text-danger" *ngIf="Newpwd?.errors.minlength">Le Nombre de caractéres minimum est 8 !</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label">Confirmez nouveau mot de passe</label>
+                            <div class="col-lg-9">
+                                <input type="password" (blur)="validatePassword(Newpwd.value,Confirmpwd.value)" (change)="validatePassword(Newpwd.value,Confirmpwd.value)" required [class.is-invalid]="!passwordConfirm && Confirmpwd.touched" #Confirmpwd="ngModel" [(ngModel)]="password.Confirmpwd"
+                                    class="form-control" id="pwd2" name="pwd">
+                                <small class="text-danger" [class.d-none]="passwordConfirm || Confirmpwd.untouched">Mots de passes différents !</small>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-form-label form-control-label"></label>
+                            <div class="col-lg-9">
+                                <button class="btn btn-success">Modifier</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+
+            </div>
+        </div>
+        <div class="col-lg-2 order-lg-1 text-center">
+            <i class="fa fa-user-circle-o fa-5x"></i>
+        </div>
+    </div>
+
+</div>
