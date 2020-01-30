@@ -27,7 +27,7 @@ Documentation avec Swagger:
 http://localhost:4000/api-docs/
 ```
 
-## dévéloppé avec
+## développé avec
 
 - Nodejs
 - Express.js
